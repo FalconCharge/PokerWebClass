@@ -7,6 +7,8 @@ var cardPoints = {
     '6': 5, '5': 4, '4': 3, '3': 2, '2': 1
 };
 
+var newGroups = {};
+
 let numPlayers = 4;
 let playerPool = [];
 
@@ -51,7 +53,26 @@ function shuffleDeck() {
 
 //Actions to make on first load
 window.onload = function () {
-    
+    document.getElementById("cardA").value = cardPoints['1'];
+    document.getElementById("cardK").value = cardPoints['k'];
+    document.getElementById("cardQ").value = cardPoints['q'];
+    document.getElementById("cardJ").value = cardPoints['j'];
+    document.getElementById("card10").value = cardPoints['t'];
+    document.getElementById("card9").value = cardPoints['9'];
+    document.getElementById("card8").value = cardPoints['8'];
+    document.getElementById("card7").value = cardPoints['7'];
+    document.getElementById("card6").value = cardPoints['6'];
+    document.getElementById("card5").value = cardPoints['5'];
+    document.getElementById("card4").value = cardPoints['4'];
+    document.getElementById("card3").value = cardPoints['3'];
+    document.getElementById("card2").value = cardPoints['2'];
+    document.getElementById("2Bonus").value = twoPairBonus;
+    document.getElementById("3Bonus").value = threePairBonus;
+    document.getElementById("numPlayers").value = 4;
+
+    document.getElementById("groupCombination").value = "";
+    document.getElementById("powerValue").value = 0;
+
 };
 //Player class stores the name, current hand, and handPowers 
 class Player{
@@ -89,6 +110,35 @@ class Player{
             else if (amount === 3) {
                 totalPoints += parseInt(threePairBonus);
             }
+        }
+        //Check in the user created groups
+        for (const group in newGroups) {
+            let groupcounter = {};
+            let groupPower = newGroups[group];
+            let groupOccurences = 0;
+
+            
+            for (let i = 0; i < group.length; i++) {
+                let cardVal = group.charAt(i);
+                if (groupcounter[cardVal]) {
+                    groupcounter[cardVal] += 1;
+                } else {
+                    groupcounter[cardVal] = 1;
+                }
+            }
+
+            let allConditionsMet = true;
+
+            for (const cardValue in groupcounter) {
+                if (!(counter[cardValue] >= groupcounter[cardValue])) {
+                    allConditionsMet = false;
+                    break;
+                }
+            }
+            if (allConditionsMet) {
+                totalPoints += groupPower;
+            }
+
         }
         
         return totalPoints;
@@ -151,6 +201,30 @@ function applyChanges() {
     threePairBonus = document.getElementById("3Bonus").value;
     twoPairBonus = document.getElementById("2Bonus").value;
     updateCardValues();
+
+    document.getElementById("cardA").value = cardPoints['1'];
+    document.getElementById("cardK").value = cardPoints['k'];
+    document.getElementById("cardQ").value = cardPoints['q'];
+    document.getElementById("cardJ").value = cardPoints['j'];
+    document.getElementById("card10").value = cardPoints['t'];
+    document.getElementById("card9").value = cardPoints['9'];
+    document.getElementById("card8").value = cardPoints['8'];
+    document.getElementById("card7").value = cardPoints['7'];
+    document.getElementById("card6").value = cardPoints['6'];
+    document.getElementById("card5").value = cardPoints['5'];
+    document.getElementById("card4").value = cardPoints['4'];
+    document.getElementById("card3").value = cardPoints['3'];
+    document.getElementById("card2").value = cardPoints['2'];
+    document.getElementById("2Bonus").value = twoPairBonus;
+    document.getElementById("3Bonus").value = threePairBonus;
+
+    let group = document.getElementById("groupCombination").value;
+    let power = parseInt(document.getElementById("powerValue").value);
+
+    newGroups[group] = power;
+    
+
+
 }
 //Deals the cards out to each player
 function dealCards() {
