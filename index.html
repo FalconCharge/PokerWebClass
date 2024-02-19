@@ -7,14 +7,16 @@
 </head>
 <body>
     <script src="index.js"></script>
-    <div id="imageContainer"></div>
-
-    <button id="showcards" onclick="displayImages()">Deal Cards</button>
-    <button id="shuffle" onclick="shuffleDeck()">Shuffle</button>
-    <a href="settings.html">Settings</a>
-    <button id="startGame" onclick="startGame()">Start The Game!!</button>
-
     <button id="singleDeal" onclick="singleDeal()">Single Deal</button>
-    
+    <a style="float: right; font-size: 50px" href="settings.html">Settings</a>
+
+    <div id="singleDealContainer"></div>
+
+    <label for="numDeals">Number of Deals:</label>
+    <input type="number" id="numDeals" min="1" value="1">
+    <button onclick="multiDeal()">Deal</button>
+
+    <div id="statsContainer"></div>
+
 </body>
 </html>
