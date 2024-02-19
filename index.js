@@ -1,22 +1,44 @@
 //The deck
-let deck = [];
+var deck = [];
 //Dictionary for the values of the cards
-const cardPoints = {
-    '1': 20, '13': 16, '12': 14, '11': 12,
-    '10': 10, '9': 8, '8': 7, '7': 6,
+var cardPoints = {
+    '1': 20, 'k': 16, 'q': 14, 'j': 12,
+    't': 10, '9': 8, '8': 7, '7': 6,
     '6': 5, '5': 4, '4': 3, '3': 2, '2': 1
 };
 
 let numPlayers = 4;
 let playerPool = [];
+
+var threePairBonus = 30;
+var twoPairBonus = 25;
 function populateDeck() {
     //Need to add "blackjack_images/" when displaying images
-    for (let i = 1; i < 14; i++) {
+    for (let i = 1; i < 10; i++) {
         deck.push(i + 'h.png'); // Hearts
         deck.push(i + 'd.png'); // Diamonds
         deck.push(i + 's.png'); // Spades
         deck.push(i + 'c.png'); // Clubs
     }
+    deck.push('jc.png');
+    deck.push('jh.png');
+    deck.push('jd.png');
+    deck.push('js.png');
+
+    deck.push('kc.png');
+    deck.push('kh.png');
+    deck.push('kd.png');
+    deck.push('ks.png');
+
+    deck.push('tc.png');
+    deck.push('th.png');
+    deck.push('td.png');
+    deck.push('ts.png');
+
+    deck.push('qc.png');
+    deck.push('qh.png');
+    deck.push('qd.png');
+    deck.push('qs.png');
     shuffleDeck();
 }
 
@@ -31,7 +53,7 @@ function shuffleDeck() {
 window.onload = function () {
     
 };
-//Player class stores the name, hand, and handPower
+//Player class stores the name, current hand, and handPowers 
 class Player{
     constructor(name) {
         this.currHand = [];
@@ -42,16 +64,33 @@ class Player{
     getName() {
         return this.name;
     }
-    clearCurrHand() {
-        this.currHand = [];
-    }
-    //returns the worth of the currHand
     getHandPower() {
         let totalPoints = 0;
+        let counter = {};
+
+
         this.currHand.forEach(card => {
-            const cardValue = card.charAt(0);
-            totalPoints += cardPoints[cardValue];
+            const cardVal = card.charAt(0);
+            if (counter[cardVal]) {
+                counter[cardVal] += 1;
+            } else {
+                counter[cardVal] = 1;
+            }
+            totalPoints += cardPoints[cardVal];
         });
+        
+
+        for (const cardValue in counter) {
+            const amount = counter[cardValue]
+            
+            if (amount === 2) {
+                totalPoints += parseInt(twoPairBonus);
+            }
+            else if (amount === 3) {
+                totalPoints += parseInt(threePairBonus);
+            }
+        }
+        
         return totalPoints;
     }
     addCard(card) {
@@ -62,31 +101,17 @@ class Player{
         this.currHand.forEach(card => console.log(card));
     }
     addHandPower() {
+        
         this.hands.push(this.getHandPower());
-        this.clearCurrHand();
+        this.currHand = [];
     }
-    //Caculates mean getting the avg of the past hand values
-    calculateMean(array) {
-        let totalPoints = 0;
-        for (let i = 0; i < array.length; i++) {
-            totalPoints += array[i];
-        }
-        return totalPoints / array.length;
-    }
-    calculateStandardDeviation() {
-        const mean = this.calculateMean(this.hands);
-        const squaredDifferences = this.hands.map(number => Math.pow(number - mean, 2));
-        const meanOfSquaredDifferences = this.calculateMean(squaredDifferences);
-
-        const standardDeviation = Math.sqrt(meanOfSquaredDifferences);
-        return standardDeviation;
-    }
+    
     displayStats() {
     let playerName = document.createElement("h1");
         playerName.textContent = this.name + " Statistics: "
 
     let meanElement = document.createElement("p");
-        meanElement.textContent = "Mean: " + this.calculateMean(this.hands);
+        meanElement.textContent = "Mean: " + calculateMean(this.hands);
 
     let minElement = document.createElement("p");
         minElement.textContent = "Minimum: " + Math.min(...this.hands);
@@ -95,7 +120,7 @@ class Player{
         maxElement.textContent = "Maximum: " + Math.max(...this.hands);
 
     let sdElement = document.createElement("p");
-        sdElement.textContent = "Standard Deviation: " + this.calculateStandardDeviation();
+        sdElement.textContent = "Standard Deviation: " + calculateStandardDeviation(this.hands);
 
         // Append the elements to the statsContainer
     statsContainer.appendChild(playerName)
@@ -108,9 +133,7 @@ class Player{
 }
 //Creates the players for the game
 function startGame() {
-    populateDeck();
     playerPool = [];
-    numPlayers = localStorage.getItem("numPlayers");
     for (let i = 1; i <= numPlayers; i++) {
         const player = new Player("Player " + i);
         playerPool.push(player);
@@ -123,8 +146,11 @@ function startGame() {
 //Applys changes to numPlayers
 //which is then saved in the local storage for later use
 function applyChanges() {
+    
     numPlayers = document.getElementById("numPlayers").value;
-    localStorage.setItem("numPlayers", numPlayers);
+    threePairBonus = document.getElementById("3Bonus").value;
+    twoPairBonus = document.getElementById("2Bonus").value;
+    updateCardValues();
 }
 //Deals the cards out to each player
 function dealCards() {
@@ -137,21 +163,25 @@ function dealCards() {
 //Plays one game and prints the power of the hands into the console
 function singleDeal() {
     startGame();
-    shuffleDeck();
+    populateDeck();
     dealCards();
 
     for (let i = 0; i < playerPool.length; i++) {
         console.log("Name: " + playerPool[i].getName() + " Power: " + playerPool[i].getHandPower());
         displayPlayerCards(playerPool[i])
+
     }
+    let statsContainer = document.getElementById("statsContainer");
+    statsContainer.innerHTML = "";
 }
+//Used for the single deal button displays the players cards and their total hand power
 function displayPlayerCards(player) {
 
     let container = document.getElementById("singleDealContainer");
 
     // Display player's name
     let playerName = document.createElement("p");
-    playerName.textContent = player.getName() + "'s Hand:";
+    playerName.textContent = player.getName() + "'s Hand With Power of: " + player.getHandPower();
     container.appendChild(playerName);
 
     // Display player's hand
@@ -179,9 +209,11 @@ function multiDeal() {
         // Calculate hand powers for each player and add them to their respective Player instances
         for (let i = 0; i < playerPool.length; i++) {
             let player = playerPool[i];
-            let handPower = player.getHandPower(); // Calculate hand power for the current player
-            player.addHandPower(handPower); // Add hand power to the player's statistics
+
+            //adds curr hand power into handpower list
+            player.addHandPower();
         }
+        
        
     }
     
@@ -190,6 +222,34 @@ function multiDeal() {
         player.displayStats();
     }
 }
+function updateCardValues() {
+    cardPoints['1'] = parseInt(document.getElementById("cardA").value);
+    cardPoints['2'] = parseInt(document.getElementById("card2").value);
+    cardPoints['3'] = parseInt(document.getElementById("card3").value);
+    cardPoints['4'] = parseInt(document.getElementById("card4").value);
+    cardPoints['5'] = parseInt(document.getElementById("card5").value);
+    cardPoints['6'] = parseInt(document.getElementById("card6").value);
+    cardPoints['7'] = parseInt(document.getElementById("card7").value);
+    cardPoints['8'] = parseInt(document.getElementById("card8").value);
+    cardPoints['9'] = parseInt(document.getElementById("card9").value);
+    cardPoints['t'] = parseInt(document.getElementById("card10").value);
+    cardPoints['j'] = parseInt(document.getElementById("cardJ").value);
+    cardPoints['q'] = parseInt(document.getElementById("cardQ").value);
+    cardPoints['k'] = parseInt(document.getElementById("cardK").value);
+    
 
+   
+}
+function calculateMean(array) {
+    const sum = array.reduce((acc, currentValue) => acc + currentValue, 0);
+    return sum / array.length;
+}
+function calculateStandardDeviation(array) {
+    const mean = calculateMean(array);
+    const squaredDifferences = array.map(number => Math.pow(number - mean, 2));
+    const meanOfSquaredDifferences = calculateMean(squaredDifferences);
 
+    const standardDeviation = Math.sqrt(meanOfSquaredDifferences);
+    return standardDeviation;
+}
 

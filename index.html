@@ -4,19 +4,83 @@
 <head>
     <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poker</title>
+    <style>
+        .gameSettings{
+            text-align:right;
+        }
+
+    </style>
 </head>
 <body>
     <script src="index.js"></script>
+
     <button id="singleDeal" onclick="singleDeal()">Single Deal</button>
-    <a style="float: right; font-size: 50px" href="settings.html">Settings</a>
 
     <div id="singleDealContainer"></div>
 
     <label for="numDeals">Number of Deals:</label>
     <input type="number" id="numDeals" min="1" value="1">
-    <button onclick="multiDeal()">Deal</button>
+    <button onclick="multiDeal()">Multi-Deal</button>
 
     <div id="statsContainer"></div>
+    <div class="gameSettings">
+        <h1>Game Settings</h1>
 
+        <label for="numPlayers">Number of Players (2-10):</label>
+        <input type="number" id="numPlayers" value="4" min="2" max="10"><br>
+
+
+        <h2>Card Power Definitions</h2>
+
+        <label for="cardA">A :</label>
+        <input type="number" id="cardA" name="cardA" value="20"><br>
+
+        <label for="cardK">K :</label>
+        <input type="number" id="cardK" name="cardK" value="16"><br>
+
+        <label for="cardQ">Q :</label>
+        <input type="number" id="cardQ" name="cardQ" value="14"><br>
+
+        <label for="cardJ">J :</label>
+        <input type="number" id="cardJ" name="cardJ" value="12"><br>
+
+        <label for="card10">10:</label>
+        <input type="number" id="card10" name="card10" value="10"><br>
+
+        <label for="card9">9 :</label>
+        <input type="number" id="card9" name="card9" value="8"><br>
+
+        <label for="card8">8 :</label>
+        <input type="number" id="card8" name="card8" value="7"><br>
+
+        <label for="card7">7 :</label>
+        <input type="number" id="card7" name="card7" value="6"><br>
+
+        <label for="card6">6 :</label>
+        <input type="number" id="card6" name="card6" value="5"><br>
+
+        <label for="card5">5 :</label>
+        <input type="number" id="card5" name="card5" value="4"><br>
+
+        <label for="card4">4 :</label>
+        <input type="number" id="card4" name="card4" value="3"><br>
+
+        <label for="card3">3 :</label>
+        <input type="number" id="card3" name="card3" value="2"><br>
+
+        <label for="card2">2 :</label>
+        <input type="number" id="card2" name="card2" value="1"><br>
+
+        <label for="2Bonus">2 Pair Bonus :</label>
+        <input type="number" id="2Bonus" name="2Bonus" value="10"><br>
+
+        <label for="3Bonus">3 Pair Bonus :</label>
+        <input type="number" id="3Bonus" name="3Bonus" value="20"><br>
+
+
+        <button type="submit" onclick="applyChanges()">Save Changes</button>
+
+
+    </div>
 </body>
 </html>
