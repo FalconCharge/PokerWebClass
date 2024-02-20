@@ -218,7 +218,7 @@ function applyChanges() {
     document.getElementById("2Bonus").value = twoPairBonus;
     document.getElementById("3Bonus").value = threePairBonus;
 
-    let group = document.getElementById("groupCombination").value;
+    let group = document.getElementById("groupCombination").value.toLowerCase();
     let power = parseInt(document.getElementById("powerValue").value);
 
     newGroups[group] = power;
